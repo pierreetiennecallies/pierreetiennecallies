@@ -58,7 +58,7 @@ export default async function ProjectPage(props: PageProps<"/work/[slug]">) {
       }}
       default="none"
     >
-      <DismissToHome className="gallery-offset min-h-svh">
+      <DismissToHome returnToOrigin className="gallery-offset min-h-svh">
         <JsonLd data={projectGraph(project)} />
         <h1 className="sr-only">{project.title}</h1>
         <HorizontalScroller label={`${project.title} — images and videos`}>

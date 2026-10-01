@@ -2,6 +2,7 @@
 
 import { useRef, type ReactNode } from "react";
 import { useMountEffect } from "@/hooks/useMountEffect";
+import { rememberedHomeStripScroll } from "@/lib/navigation-memory";
 
 const LINE_HEIGHT_PX = 16;
 
@@ -35,12 +36,19 @@ function redirectVerticalWheelToHorizontal(track: HTMLElement) {
 
 export function HorizontalScroller({
   label,
+  restoresHomeScroll = false,
   children,
 }: {
   label: string;
+  restoresHomeScroll?: boolean;
   children: ReactNode;
 }) {
   const trackRef = useRef<HTMLDivElement>(null);
+
+  const attachTrack = (element: HTMLDivElement | null) => {
+    trackRef.current = element;
+    if (element && restoresHomeScroll) element.scrollLeft = rememberedHomeStripScroll();
+  };
 
   useMountEffect(() => {
     if (!trackRef.current) return;
@@ -49,7 +57,8 @@ export function HorizontalScroller({
 
   return (
     <div
-      ref={trackRef}
+      ref={attachTrack}
+      data-strip={restoresHomeScroll ? "" : undefined}
       role="region"
       aria-label={label}
       tabIndex={0}
