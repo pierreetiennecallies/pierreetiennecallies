@@ -5,8 +5,8 @@
   --foreground: #000000;
   --gutter-x: clamp(20px, 1.67vw, 40px);
   --header-clearance: clamp(88px, 7vw, 180px);
-  --header-pl: max(clamp(24px, 3.06vw, 72px), env(safe-area-inset-left));
-  --header-pr: max(clamp(20px, 1.67vw, 40px), env(safe-area-inset-right));
+  --header-pl: max(var(--gutter-x), env(safe-area-inset-left));
+  --header-pr: max(var(--gutter-x), env(safe-area-inset-right));
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   color-scheme: light;
