@@ -40,7 +40,7 @@ export const project = defineType({
       type: "text",
       rows: 8,
       description:
-        "Optional. Shown under the images once the project is opened, instead of the credits. Line breaks and blank lines are kept. Leave empty to show the credits.",
+        "Optional. Shown on the project page under the credits, once the project is opened. Line breaks and blank lines are kept.",
     }),
     defineField({
       name: "images",

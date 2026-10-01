@@ -34,9 +34,9 @@ export function ArchiveGrid({ projects }: { projects: Project[] }) {
               />
             </ViewTransition>
           </Link>
-          <p className="pointer-events-none absolute inset-x-0 top-full mt-[clamp(6px,0.6vw,14px)] text-label leading-[1.35] tracking-[0.02em] opacity-0 transition-opacity duration-300 group-hover/item:opacity-100 group-has-focus-visible/item:opacity-100 motion-reduce:transition-none">
+          <p className="pointer-events-none absolute inset-x-0 top-full z-10 bg-background pt-[clamp(6px,0.6vw,14px)] pb-1 text-label leading-[1.35] tracking-[0.02em] opacity-0 transition-opacity duration-300 group-hover/item:opacity-100 group-has-focus-visible/item:opacity-100 motion-reduce:transition-none">
             {project.credits.map((line, lineIndex) => (
-              <span key={lineIndex} className="block truncate">
+              <span key={lineIndex} className="block">
                 {line}
               </span>
             ))}

@@ -128,6 +128,8 @@ const projectsQuery = `*[_type == "project" && defined(slug.current) && count(im
 
 const DEFAULT_VIDEO_SIZE = { width: 1080, height: 1350 };
 
+const freshContent = { cache: "no-store" } as const;
+
 const settingsQuery = `*[_id == "siteSettings"][0]{
   tagline,
   archiveLabel,
@@ -230,7 +232,7 @@ function toProject(raw: RawProject): Project {
 }
 
 export const getProjects = cache(async (): Promise<Project[]> => {
-  const raw = await sanityClient.fetch<RawProject[]>(projectsQuery);
+  const raw = await sanityClient.fetch<RawProject[]>(projectsQuery, {}, freshContent);
   return raw.map(toProject);
 });
 
@@ -240,7 +242,7 @@ export const getProject = cache(async (slug: string) => {
 });
 
 export const getSettings = cache(async (): Promise<Settings> => {
-  const raw = await sanityClient.fetch<RawSettings | null>(settingsQuery);
+  const raw = await sanityClient.fetch<RawSettings | null>(settingsQuery, {}, freshContent);
   if (!raw) throw new Error("Site settings are missing in Sanity");
   return {
     tagline: raw.tagline,

@@ -92,22 +92,16 @@ export default async function ProjectPage(props: PageProps<"/work/[slug]">) {
           </ul>
         </HorizontalScroller>
         <div className="gallery-gutter -mt-6">
-          {project.details ? (
-            <p
-              data-keep-open
-              className={`${captionClassName} w-fit max-w-[60ch] cursor-auto whitespace-pre-line`}
-            >
-              {project.details}
-            </p>
-          ) : (
-            <p data-keep-open className={`${captionClassName} w-fit cursor-auto`}>
-              {project.credits.map((line, index) => (
-                <span key={index} className="block">
-                  {line}
-                </span>
-              ))}
-            </p>
-          )}
+          <div data-keep-open className={`${captionClassName} w-fit max-w-[60ch] cursor-auto`}>
+            {project.credits.map((line, index) => (
+              <span key={index} className="block">
+                {line}
+              </span>
+            ))}
+            {project.details ? (
+              <p className="mt-[1.35em] whitespace-pre-line">{project.details}</p>
+            ) : null}
+          </div>
         </div>
       </DismissToHome>
     </ViewTransition>
