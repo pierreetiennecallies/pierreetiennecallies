@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import { preconnect } from "react-dom";
 import { JsonLd } from "./components/JsonLd";
+import { RouteTransitionTrigger } from "./components/RouteTransitionTrigger";
 import { SiteHeader } from "./components/SiteHeader";
 import { getSettings } from "@/lib/content";
 import { iconMetadata, pageMetadata } from "@/lib/metadata";
@@ -72,6 +73,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="relative min-h-svh">
         <JsonLd data={siteGraph(settings)} />
         <SiteHeader />
+        <RouteTransitionTrigger />
         {children}
       </body>
     </html>

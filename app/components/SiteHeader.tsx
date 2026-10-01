@@ -1,7 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { getSettings } from "@/lib/content";
 import { SITE_NAME } from "@/lib/site";
+import { LogoLink } from "./LogoLink";
+import { NavLink } from "./NavLink";
 
 const labelClassName = "text-label leading-none tracking-[0.02em]";
 
@@ -12,11 +13,7 @@ export async function SiteHeader() {
 
   return (
     <header className="site-header pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between pt-[max(clamp(18px,2.2vw,52px),env(safe-area-inset-top))] pr-(--header-pr) pl-(--header-pl)">
-      <Link
-        href="/"
-        transitionTypes={["to-home"]}
-        className="pointer-events-auto flex flex-col gap-[0.3em] text-label"
-      >
+      <LogoLink className="pointer-events-auto flex flex-col gap-[0.3em] text-label">
         <Image
           src="/logo.svg"
           alt={SITE_NAME}
@@ -26,22 +23,14 @@ export async function SiteHeader() {
           className="-ml-[0.08em] h-[calc(var(--logo-width)/19.497)] w-auto max-w-none [--logo-width:clamp(min(189px,calc(100vw-180px)),15.46vw,441px)]"
         />
         <span className={labelClassName}>{settings.tagline}</span>
-      </Link>
+      </LogoLink>
       <nav className="pointer-events-auto -mx-3 -mb-3 -mt-[calc(0.45em+0.75rem)] flex">
-        <Link
-          href="/archive"
-          transitionTypes={["to-archive"]}
-          className={navLinkClassName}
-        >
+        <NavLink href="/archive" transition="to-archive" className={navLinkClassName}>
           {settings.archiveLabel}
-        </Link>
-        <Link
-          href="/contact"
-          transitionTypes={["to-contact"]}
-          className={navLinkClassName}
-        >
+        </NavLink>
+        <NavLink href="/contact" transition="to-contact" className={navLinkClassName}>
           {settings.contactLabel}
-        </Link>
+        </NavLink>
       </nav>
     </header>
   );

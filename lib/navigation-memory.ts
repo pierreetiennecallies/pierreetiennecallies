@@ -1,7 +1,12 @@
+import type { NavigationTransition } from "./navigation-transition";
+
 export type ProjectOrigin = "home" | "archive";
 
 const ORIGIN_PATHS: Record<ProjectOrigin, string> = { home: "/", archive: "/archive" };
-const ORIGIN_TRANSITIONS: Record<ProjectOrigin, string> = { home: "to-home", archive: "to-archive" };
+const ORIGIN_TRANSITIONS: Record<ProjectOrigin, NavigationTransition> = {
+  home: "project-to-home",
+  archive: "project-to-archive",
+};
 
 let projectOrigin: ProjectOrigin = "home";
 let homeStripScroll = 0;

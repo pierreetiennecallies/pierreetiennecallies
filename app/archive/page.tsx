@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ViewTransition } from "react";
 import { ArchiveGrid } from "@/app/components/ArchiveGrid";
 import { JsonLd } from "@/app/components/JsonLd";
 import { getProjects, getSettings } from "@/lib/content";
@@ -21,23 +20,12 @@ export default async function Archive() {
   const [projects, settings] = await Promise.all([getProjects(), getSettings()]);
 
   return (
-    <ViewTransition
-      enter={{ "to-archive": "page-in", default: "none" }}
-      exit={{
-        "to-home": "page-out",
-        "to-contact": "gallery-out",
-        "to-project": "page-out",
-        default: "none",
-      }}
-      default="none"
-    >
-      <main>
-        <JsonLd data={collectionPageGraph(projects, "/archive", settings.archiveLabel)} />
-        <h1 className="sr-only">
-          {SITE_NAME} — {settings.archiveLabel}
-        </h1>
-        <ArchiveGrid projects={projects} />
-      </main>
-    </ViewTransition>
+    <main>
+      <JsonLd data={collectionPageGraph(projects, "/archive", settings.archiveLabel)} />
+      <h1 className="sr-only">
+        {SITE_NAME} — {settings.archiveLabel}
+      </h1>
+      <ArchiveGrid projects={projects} />
+    </main>
   );
 }

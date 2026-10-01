@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { stillImage, type Media } from "@/lib/content";
 import { VideoLoop } from "./VideoLoop";
 
@@ -9,6 +10,7 @@ export function MediaView({
   fitVideoShape = true,
   allowSound = false,
   fillFrame = false,
+  coverName,
   className,
 }: {
   media: Media;
@@ -17,9 +19,12 @@ export function MediaView({
   fitVideoShape?: boolean;
   allowSound?: boolean;
   fillFrame?: boolean;
+  coverName?: string;
   className?: string;
 }) {
   const objectPosition = fillFrame ? stillImage(media)?.focus : undefined;
+  const coverStyle = coverName ? ({ "--cover-name": coverName } as CSSProperties) : undefined;
+  const coverAttribute = coverName ? { "data-cover": "" } : {};
 
   if (media.kind === "video") {
     return (
@@ -32,6 +37,8 @@ export function MediaView({
         fitVideoShape={fitVideoShape}
         soundToggle={allowSound && media.hasSound}
         objectPosition={objectPosition}
+        coverStyle={coverStyle}
+        coverName={coverName}
         className={className}
       />
     );
@@ -47,7 +54,8 @@ export function MediaView({
       preload={preload}
       draggable={false}
       className={className}
-      style={objectPosition ? { objectPosition } : undefined}
+      style={{ ...coverStyle, ...(objectPosition ? { objectPosition } : {}) }}
+      {...coverAttribute}
     />
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type MouseEvent, type SyntheticEvent } from "react";
+import { useState, type CSSProperties, type MouseEvent, type SyntheticEvent } from "react";
 
 const SOUND_VIDEO_SELECTOR = "video[data-sound-toggle]";
 
@@ -19,6 +19,8 @@ export function VideoLoop({
   fitVideoShape,
   soundToggle,
   objectPosition,
+  coverStyle,
+  coverName,
   className,
 }: {
   src: string;
@@ -29,6 +31,8 @@ export function VideoLoop({
   fitVideoShape: boolean;
   soundToggle: boolean;
   objectPosition?: string;
+  coverStyle?: CSSProperties;
+  coverName?: string;
   className?: string;
 }) {
   const [aspectRatio, setAspectRatio] = useState(width / height);
@@ -68,7 +72,8 @@ export function VideoLoop({
       onLoadedMetadata={matchVideoShape}
       onVolumeChange={(event) => setSoundOn(!event.currentTarget.muted)}
       className={`object-cover ${className ?? ""}`}
-      style={{ aspectRatio, objectPosition }}
+      data-cover={coverName ? "" : undefined}
+      style={{ ...coverStyle, aspectRatio, objectPosition }}
     />
   );
 

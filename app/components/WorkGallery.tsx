@@ -1,4 +1,3 @@
-import { ViewTransition } from "react";
 import { coverTransitionName, type Project } from "@/lib/content";
 import { HorizontalScroller } from "./HorizontalScroller";
 import { MediaView } from "./MediaView";
@@ -20,18 +19,13 @@ export function WorkGallery({ projects }: { projects: Project[] }) {
               origin="home"
               className="block outline-none focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-black"
             >
-              <ViewTransition
-                name={coverTransitionName(project.slug)}
-                share="morph"
-                default="none"
-              >
                 <MediaView
                   media={project.cover}
                   sizes={galleryImageSizes}
                   preload={index === 0}
+                  coverName={coverTransitionName(project.slug)}
                   className="gallery-image w-auto select-none"
                 />
-              </ViewTransition>
             </ProjectLink>
             <p
               className={`${captionClassName} w-0 min-w-full opacity-0 transition-opacity duration-300 group-hover/item:opacity-100 group-has-focus-visible/item:opacity-100 motion-reduce:transition-none [@media(hover:none)]:opacity-100 ${

@@ -4,13 +4,19 @@ import { useRouter } from "next/navigation";
 import type { MouseEvent, ReactNode } from "react";
 import { useMountEffect } from "@/hooks/useMountEffect";
 import { projectReturnTarget } from "@/lib/navigation-memory";
+import {
+  markNavigationTransition,
+  type NavigationTransition,
+} from "@/lib/navigation-transition";
 
 export function DismissToHome({
   returnToOrigin = false,
+  homeTransition = "to-home",
   className,
   children,
 }: {
   returnToOrigin?: boolean;
+  homeTransition?: NavigationTransition;
   className?: string;
   children: ReactNode;
 }) {
@@ -19,8 +25,9 @@ export function DismissToHome({
   const goHome = () => {
     const target = returnToOrigin
       ? projectReturnTarget()
-      : { path: "/", transition: "to-home" };
-    router.push(target.path, { scroll: false, transitionTypes: [target.transition] });
+      : { path: "/", transition: homeTransition };
+    markNavigationTransition(target.transition);
+    router.push(target.path, { scroll: false });
   };
 
   const handleClick = (event: MouseEvent<HTMLElement>) => {

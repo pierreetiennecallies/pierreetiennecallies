@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ViewTransition } from "react";
 import { DismissToHome } from "@/app/components/DismissToHome";
 import { HorizontalScroller } from "@/app/components/HorizontalScroller";
 import { JsonLd } from "@/app/components/JsonLd";
@@ -47,63 +46,37 @@ export default async function ProjectPage(props: PageProps<"/work/[slug]">) {
   if (!project) notFound();
 
   return (
-    <ViewTransition
-      enter={{ "to-project": "page-in", default: "none" }}
-      exit={{
-        "to-home": "page-out",
-        "to-contact": "gallery-out",
-        "to-project": "page-out",
-        "to-archive": "page-out",
-        default: "none",
-      }}
-      default="none"
-    >
-      <DismissToHome returnToOrigin className="gallery-offset min-h-svh">
-        <JsonLd data={projectGraph(project)} />
-        <h1 className="sr-only">{project.title}</h1>
-        <HorizontalScroller label={`${project.title} — images and videos`}>
-          <ul className="flex w-max gap-[clamp(8px,0.83vw,20px)]">
-            {project.media.map((media, index) => (
-              <li key={index} className="shrink-0 snap-start">
-                {index === 0 ? (
-                  <ViewTransition
-                    name={coverTransitionName(project.slug)}
-                    share="morph"
-                    default="none"
-                  >
-                    <MediaView
-                      media={media}
-                      sizes={galleryImageSizes}
-                      preload
-                      allowSound
-                      className="gallery-image w-auto select-none"
-                    />
-                  </ViewTransition>
-                ) : (
-                  <MediaView
-                    media={media}
-                    sizes={galleryImageSizes}
-                    allowSound
-                    className="gallery-image w-auto select-none"
-                  />
-                )}
-              </li>
-            ))}
-          </ul>
-        </HorizontalScroller>
-        <div className="gallery-gutter -mt-6">
-          <div data-keep-open className={`${captionClassName} w-fit max-w-[60ch] cursor-auto`}>
-            {project.credits.map((line, index) => (
-              <span key={index} className="block">
-                {line}
-              </span>
-            ))}
-            {project.details ? (
-              <p className="mt-[1.35em] whitespace-pre-line">{project.details}</p>
-            ) : null}
-          </div>
+    <DismissToHome returnToOrigin className="gallery-offset min-h-svh">
+      <JsonLd data={projectGraph(project)} />
+      <h1 className="sr-only">{project.title}</h1>
+      <HorizontalScroller label={`${project.title} — images and videos`}>
+        <ul className="flex w-max gap-[clamp(8px,0.83vw,20px)]">
+          {project.media.map((media, index) => (
+            <li key={index} className="shrink-0 snap-start">
+              <MediaView
+                  media={media}
+                  sizes={galleryImageSizes}
+                  preload={index === 0}
+                  allowSound
+                  coverName={index === 0 ? coverTransitionName(project.slug) : undefined}
+                  className="gallery-image w-auto select-none"
+                />
+            </li>
+          ))}
+        </ul>
+      </HorizontalScroller>
+      <div className="gallery-gutter -mt-6">
+        <div data-keep-open className={`${captionClassName} w-fit max-w-[60ch] cursor-auto`}>
+          {project.credits.map((line, index) => (
+            <span key={index} className="block">
+              {line}
+            </span>
+          ))}
+          {project.details ? (
+            <p className="mt-[1.35em] whitespace-pre-line">{project.details}</p>
+          ) : null}
         </div>
-      </DismissToHome>
-    </ViewTransition>
+      </div>
+    </DismissToHome>
   );
 }

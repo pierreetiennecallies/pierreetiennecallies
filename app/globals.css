@@ -53,7 +53,7 @@ body {
   padding: max(var(--header-clearance), 16svh) var(--header-pr) clamp(48px, 6vw, 120px)
     var(--header-pl);
   column-gap: var(--archive-gap);
-  row-gap: clamp(28px, 3.15vw, 72px);
+  row-gap: clamp(56px, 5vw, 110px);
 }
 
 @media (hover: none) {
@@ -109,6 +109,12 @@ body {
   animation: none;
 }
 
+::view-transition-group(.route-marker),
+::view-transition-old(.route-marker),
+::view-transition-new(.route-marker) {
+  animation: none;
+}
+
 ::view-transition-group(site-header) {
   animation: none;
   z-index: 100;
@@ -122,33 +128,82 @@ body {
   animation: none;
 }
 
-::view-transition-old(.gallery-out) {
-  animation: 800ms var(--ease-in-out-quart) both slide-to-right;
+:root {
+  --vt-move: 700ms;
+  --vt-out: 200ms;
+  --vt-in: 300ms;
+  --vt-slide: 800ms;
+  --vt-swap-out: 200ms;
+  --vt-swap-in: 300ms;
+  --vt-swap-delay: 150ms;
 }
 
-::view-transition-new(.gallery-in) {
-  animation: 800ms var(--ease-in-out-quart) both slide-from-right;
+html[data-nav-transition="to-archive"] [data-cover],
+html[data-nav-transition="to-home"] [data-cover],
+html[data-nav-transition="to-project"] [data-cover],
+html[data-nav-transition="project-to-home"] [data-cover],
+html[data-nav-transition="project-to-archive"] [data-cover] {
+  view-transition-name: var(--cover-name);
+  view-transition-class: cover;
 }
 
-::view-transition-new(.bio-in) {
-  animation: 500ms var(--ease-out-quart) 350ms both fade-in;
-}
-
-::view-transition-old(.bio-out) {
-  animation: 250ms ease-in both fade-out;
-}
-
-::view-transition-group(.morph) {
-  animation-duration: 700ms;
+::view-transition-group(.cover) {
+  animation-duration: var(--vt-move);
   animation-timing-function: var(--ease-in-out-quart);
 }
 
-::view-transition-old(.page-out) {
+::view-transition-old(.cover),
+::view-transition-new(.cover) {
+  animation-duration: var(--vt-move);
+  animation-timing-function: var(--ease-in-out-quart);
+}
+
+::view-transition-old(.cover):only-child {
+  animation: var(--vt-out) ease-out both fade-out;
+}
+
+::view-transition-new(.cover):only-child {
+  animation: var(--vt-in) var(--ease-out-quart) var(--vt-move) both fade-in;
+}
+
+html[data-nav-transition="to-archive"]::view-transition-old(root),
+html[data-nav-transition="to-home"]::view-transition-old(root),
+html[data-nav-transition="to-project"]::view-transition-old(root),
+html[data-nav-transition="project-to-home"]::view-transition-old(root),
+html[data-nav-transition="project-to-archive"]::view-transition-old(root) {
+  animation: var(--vt-out) ease-out both fade-out;
+}
+
+html[data-nav-transition="to-archive"]::view-transition-new(root),
+html[data-nav-transition="to-home"]::view-transition-new(root),
+html[data-nav-transition="to-project"]::view-transition-new(root),
+html[data-nav-transition="project-to-home"]::view-transition-new(root),
+html[data-nav-transition="project-to-archive"]::view-transition-new(root) {
+  animation: var(--vt-in) var(--ease-out-quart) var(--vt-move) both fade-in;
+}
+
+html[data-nav-transition="contact-to-archive"]::view-transition-old(root) {
+  animation: var(--vt-swap-out) ease-out both fade-out;
+}
+
+html[data-nav-transition="contact-to-archive"]::view-transition-new(root) {
+  animation: var(--vt-swap-in) var(--ease-out-quart) var(--vt-swap-delay) both fade-in;
+}
+
+html[data-nav-transition="to-contact"]::view-transition-old(root) {
+  animation: var(--vt-slide) var(--ease-in-out-quart) both slide-to-right;
+}
+
+html[data-nav-transition="to-contact"]::view-transition-new(root) {
+  animation: 500ms var(--ease-out-quart) 350ms both fade-in;
+}
+
+html[data-nav-transition="contact-to-home"]::view-transition-old(root) {
   animation: 250ms ease-in both fade-out;
 }
 
-::view-transition-new(.page-in) {
-  animation: 450ms var(--ease-out-quart) 250ms both fade-in;
+html[data-nav-transition="contact-to-home"]::view-transition-new(root) {
+  animation: var(--vt-slide) var(--ease-in-out-quart) both slide-from-right;
 }
 
 @keyframes slide-to-right {
@@ -176,21 +231,15 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-old(.gallery-out),
-  ::view-transition-new(.gallery-in) {
-    animation: 250ms ease both fade-in;
+  :root {
+    --vt-move: 0ms;
   }
 
-  ::view-transition-old(.gallery-out) {
-    animation-name: fade-out;
+  html[data-nav-transition]::view-transition-old(root) {
+    animation: 200ms ease both fade-out;
   }
 
-  ::view-transition-new(.bio-in),
-  ::view-transition-new(.page-in) {
-    animation-delay: 0s;
-  }
-
-  ::view-transition-group(.morph) {
-    animation-duration: 0s;
+  html[data-nav-transition]::view-transition-new(root) {
+    animation: 200ms ease both fade-in;
   }
 }
