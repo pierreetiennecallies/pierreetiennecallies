@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Media } from "@/lib/content";
+import { stillImage, type Media } from "@/lib/content";
 import { VideoLoop } from "./VideoLoop";
 
 export function MediaView({
@@ -8,6 +8,7 @@ export function MediaView({
   preload = false,
   fitVideoShape = true,
   allowSound = false,
+  fillFrame = false,
   className,
 }: {
   media: Media;
@@ -15,8 +16,11 @@ export function MediaView({
   preload?: boolean;
   fitVideoShape?: boolean;
   allowSound?: boolean;
+  fillFrame?: boolean;
   className?: string;
 }) {
+  const objectPosition = fillFrame ? stillImage(media)?.focus : undefined;
+
   if (media.kind === "video") {
     return (
       <VideoLoop
@@ -27,6 +31,7 @@ export function MediaView({
         label={media.alt}
         fitVideoShape={fitVideoShape}
         soundToggle={allowSound && media.hasSound}
+        objectPosition={objectPosition}
         className={className}
       />
     );
@@ -42,6 +47,7 @@ export function MediaView({
       preload={preload}
       draggable={false}
       className={className}
+      style={objectPosition ? { objectPosition } : undefined}
     />
   );
 }

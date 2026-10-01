@@ -48,23 +48,21 @@ body {
 .archive-grid {
   --archive-columns: 2;
   --archive-gap: clamp(6px, 0.53vw, 14px);
-  --archive-row-height: calc(
-    (100vw - var(--header-pl) - var(--header-pr) - (var(--archive-columns) - 1) * var(--archive-gap)) /
-      (var(--archive-columns) * 0.79)
-  );
+  display: grid;
+  grid-template-columns: repeat(var(--archive-columns), minmax(0, 1fr));
   padding: max(var(--header-clearance), 16svh) var(--header-pr) clamp(48px, 6vw, 120px)
     var(--header-pl);
   column-gap: var(--archive-gap);
   row-gap: clamp(28px, 3.15vw, 72px);
 }
 
-@media (min-width: 640px) {
+@media (hover: none) {
   .archive-grid {
-    --archive-columns: 3;
+    row-gap: var(--archive-gap);
   }
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 640px) {
   .archive-grid {
     --archive-columns: 4;
   }
@@ -74,11 +72,6 @@ body {
   .archive-grid {
     --archive-columns: 6;
   }
-}
-
-.archive-item {
-  flex-basis: calc(var(--archive-row-height) * var(--aspect));
-  flex-grow: var(--aspect);
 }
 
 .gallery-image {

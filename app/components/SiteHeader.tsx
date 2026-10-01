@@ -23,7 +23,7 @@ export async function SiteHeader() {
           width={1677}
           height={86}
           preload
-          className="-ml-[0.08em] h-[calc(var(--logo-width)/19.497)] w-auto max-w-none [--logo-width:clamp(189px,15.46vw,441px)]"
+          className="-ml-[0.08em] h-[calc(var(--logo-width)/19.497)] w-auto max-w-none [--logo-width:clamp(min(189px,calc(100vw-180px)),15.46vw,441px)]"
         />
         <span className={labelClassName}>{settings.tagline}</span>
       </Link>

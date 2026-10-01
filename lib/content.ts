@@ -5,6 +5,7 @@ export type SiteImage = {
   url: string;
   width: number;
   height: number;
+  focus: string;
   alt: string;
   shareUrl: string;
 };
@@ -63,7 +64,7 @@ export type Settings = {
 type RawImage = {
   alt?: string;
   crop?: object;
-  hotspot?: object;
+  hotspot?: { x?: number; y?: number } | null;
   asset: { _id: string; url: string; width: number; height: number };
 };
 
@@ -158,11 +159,18 @@ function trimBlock(text?: string) {
   return trimmed ? trimmed : undefined;
 }
 
+function focusPosition(hotspot: RawImage["hotspot"]) {
+  const x = hotspot?.x ?? 0.5;
+  const y = hotspot?.y ?? 0.5;
+  return `${(x * 100).toFixed(1)}% ${(y * 100).toFixed(1)}%`;
+}
+
 function toSiteImage(image: RawImage, fallbackAlt: string): SiteImage {
   return {
     url: image.asset.url,
     width: image.asset.width,
     height: image.asset.height,
+    focus: focusPosition(image.hotspot),
     alt: image.alt?.trim() || fallbackAlt,
     shareUrl: imageUrlBuilder
       .image({ asset: { _ref: image.asset._id }, crop: image.crop, hotspot: image.hotspot })

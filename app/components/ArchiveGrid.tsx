@@ -1,24 +1,19 @@
 import Link from "next/link";
-import { ViewTransition, type CSSProperties } from "react";
+import { ViewTransition } from "react";
 import { coverTransitionName, type Project } from "@/lib/content";
 import { MediaView } from "./MediaView";
 
-const archiveImageSizes =
-  "(min-width: 1280px) 17vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw";
+const archiveImageSizes = "(min-width: 1280px) 17vw, (min-width: 640px) 25vw, 50vw";
 
 export function ArchiveGrid({ projects }: { projects: Project[] }) {
   return (
-    <ul className="archive-grid flex flex-wrap">
+    <ul className="archive-grid">
       {projects.map((project, index) => (
-        <li
-          key={project.slug}
-          className="archive-item group/item relative"
-          style={{ "--aspect": project.cover.width / project.cover.height } as CSSProperties}
-        >
+        <li key={project.slug} className="group/item relative min-w-0">
           <Link
             href={`/work/${project.slug}`}
             transitionTypes={["to-project"]}
-            className="block outline-none focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-black"
+            className="block aspect-[4/5] overflow-hidden outline-none focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-black"
           >
             <ViewTransition
               name={coverTransitionName(project.slug)}
@@ -30,7 +25,8 @@ export function ArchiveGrid({ projects }: { projects: Project[] }) {
                 sizes={archiveImageSizes}
                 preload={index < 6}
                 fitVideoShape={false}
-                className="block h-auto w-full select-none"
+                fillFrame
+                className="block h-full w-full object-cover select-none"
               />
             </ViewTransition>
           </Link>
@@ -43,7 +39,6 @@ export function ArchiveGrid({ projects }: { projects: Project[] }) {
           </p>
         </li>
       ))}
-      <li aria-hidden className="grow-[1000] basis-0" />
     </ul>
   );
 }

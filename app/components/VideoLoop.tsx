@@ -18,6 +18,7 @@ export function VideoLoop({
   label,
   fitVideoShape,
   soundToggle,
+  objectPosition,
   className,
 }: {
   src: string;
@@ -27,6 +28,7 @@ export function VideoLoop({
   label: string;
   fitVideoShape: boolean;
   soundToggle: boolean;
+  objectPosition?: string;
   className?: string;
 }) {
   const [aspectRatio, setAspectRatio] = useState(width / height);
@@ -66,7 +68,7 @@ export function VideoLoop({
       onLoadedMetadata={matchVideoShape}
       onVolumeChange={(event) => setSoundOn(!event.currentTarget.muted)}
       className={`object-cover ${className ?? ""}`}
-      style={{ aspectRatio }}
+      style={{ aspectRatio, objectPosition }}
     />
   );
 
