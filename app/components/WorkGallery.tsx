@@ -7,7 +7,7 @@ import { HorizontalScroller } from "./HorizontalScroller";
 export const galleryImageSizes = "(max-aspect-ratio: 9/16) 86vw, 49vh";
 
 export const captionClassName =
-  "mt-[clamp(16px,1.67vw,40px)] pl-2 text-label leading-[1.35] tracking-[0.02em]";
+  "mt-[clamp(10px,1.11vw,28px)] pl-2 text-label leading-[1.35] tracking-[0.02em]";
 
 export function WorkGallery({ projects }: { projects: Project[] }) {
   return (

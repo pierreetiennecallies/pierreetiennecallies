@@ -10,7 +10,7 @@ export async function SiteHeader() {
   const settings = await getSettings();
 
   return (
-    <header className="site-header pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between pt-[max(clamp(24px,3.06vw,72px),env(safe-area-inset-top))] pr-[max(clamp(20px,1.67vw,40px),env(safe-area-inset-right))] pl-[max(clamp(24px,3.06vw,72px),env(safe-area-inset-left))]">
+    <header className="site-header pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between pt-[max(clamp(18px,2.2vw,52px),env(safe-area-inset-top))] pr-[max(clamp(20px,1.67vw,40px),env(safe-area-inset-right))] pl-[max(clamp(24px,3.06vw,72px),env(safe-area-inset-left))]">
       <Link
         href="/"
         transitionTypes={["to-home"]}
