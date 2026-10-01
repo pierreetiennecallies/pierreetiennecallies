@@ -15,6 +15,7 @@
   --color-foreground: var(--foreground);
   --font-serif: var(--font-modern), "Bodoni 72", Didot, "Times New Roman", serif;
   --font-mono: var(--font-monument-mono), ui-monospace, monospace;
+  --text-label: clamp(11px, 0.81vw, 18px);
 }
 
 body {
@@ -56,11 +57,11 @@ body {
   --bio-width: min(
     100vw - 48px,
     max(36.9vw, 420px),
-    (100svh - 2 * var(--header-clearance)) * 2.2
+    (100svh - 2 * var(--header-clearance) - 3rem) * 2.2
   );
-  font-size: calc(var(--bio-width) * 0.0461);
+  font-size: calc(var(--bio-width) * 0.0452);
   line-height: 0.81;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.055em;
   font-kerning: normal;
 }
 
@@ -106,6 +107,19 @@ body {
   animation: 250ms ease-in both fade-out;
 }
 
+::view-transition-group(.morph) {
+  animation-duration: 700ms;
+  animation-timing-function: var(--ease-in-out-quart);
+}
+
+::view-transition-old(.page-out) {
+  animation: 250ms ease-in both fade-out;
+}
+
+::view-transition-new(.page-in) {
+  animation: 450ms var(--ease-out-quart) 250ms both fade-in;
+}
+
 @keyframes slide-to-right {
   to {
     translate: 100vw;
@@ -140,7 +154,12 @@ body {
     animation-name: fade-out;
   }
 
-  ::view-transition-new(.bio-in) {
+  ::view-transition-new(.bio-in),
+  ::view-transition-new(.page-in) {
     animation-delay: 0s;
+  }
+
+  ::view-transition-group(.morph) {
+    animation-duration: 0s;
   }
 }

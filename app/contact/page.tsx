@@ -1,42 +1,70 @@
 import type { Metadata } from "next";
 import { ViewTransition } from "react";
+import { DismissToHome } from "@/app/components/DismissToHome";
+import { JsonLd } from "@/app/components/JsonLd";
+import { getSettings } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
+import { profilePageGraph } from "@/lib/structured-data";
 
-export const metadata: Metadata = {
-  title: "Contact",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  return pageMetadata({
+    settings,
+    title: "About & Contact",
+    description: settings.contactDescription,
+    path: "/contact",
+  });
+}
 
-const bioLines = [
-  "Pierre-Etienne Callies",
-  "is a casting director",
-  "with image-driven approach",
-  "to discovering and shaping new faces.",
-  "His work moves between fashion, art, and",
-  "culture, with a focus on individuality,",
-  "character, and the energy a person brings",
-  "to the frame. His casting",
-  "reflects a refined yet",
-  "intuitive sensibility— balancing",
-  "strong visual identity",
-  "with a sense of authenticity.",
-];
+export default async function Contact() {
+  const settings = await getSettings();
 
-export default function Contact() {
   return (
     <ViewTransition
       enter={{ "to-contact": "bio-in", default: "none" }}
       exit={{ "to-home": "bio-out", default: "none" }}
       default="none"
     >
-      <main className="bio-page flex min-h-svh items-center justify-center">
+      <DismissToHome className="bio-page flex min-h-svh items-center justify-center">
+        <JsonLd data={profilePageGraph()} />
         <h1 className="sr-only">About Pierre-Etienne Callies</h1>
-        <p className="bio-text text-center font-serif uppercase">
-          {bioLines.map((line) => (
-            <span key={line} className="block whitespace-nowrap">
-              {line}
-            </span>
-          ))}
-        </p>
-      </main>
+        <div className="flex flex-col items-center gap-[clamp(32px,3.3vw,72px)]">
+          <p
+            data-keep-open
+            className="bio-text cursor-auto text-center font-serif uppercase"
+          >
+            {settings.bioLines.map((line, index) => (
+              <span key={index} className="block whitespace-nowrap">
+                {line}
+              </span>
+            ))}
+          </p>
+          <div className="flex flex-col items-center gap-[0.9em] text-label leading-none tracking-[0.02em]">
+            <a
+              href={`mailto:${settings.email}`}
+              className="transition-opacity hover:opacity-50"
+            >
+              {settings.email}
+            </a>
+            {settings.socialLinks.length > 0 ? (
+              <ul className="flex flex-wrap justify-center gap-x-[1.5em] gap-y-[0.9em]">
+                {settings.socialLinks.map((link) => (
+                  <li key={link.url}>
+                    <a
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="transition-opacity hover:opacity-50"
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        </div>
+      </DismissToHome>
     </ViewTransition>
   );
 }

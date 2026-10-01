@@ -1,6 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import { preconnect } from "react-dom";
+import { JsonLd } from "./components/JsonLd";
 import { SiteHeader } from "./components/SiteHeader";
+import { getSettings } from "@/lib/content";
+import { pageMetadata } from "@/lib/metadata";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
+import { siteGraph } from "@/lib/structured-data";
 import "./globals.css";
 
 const modernNo20 = localFont({
@@ -15,14 +21,35 @@ const monumentGroteskMono = localFont({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Pierre-Etienne Callies — Casting + Consulting",
-    template: "%s — Pierre-Etienne Callies",
-  },
-  description:
-    "Pierre-Etienne Callies is a casting director with an image-driven approach to discovering and shaping new faces.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSettings();
+  return {
+    ...pageMetadata({ settings, path: "/" }),
+    metadataBase: new URL(SITE_URL),
+    title: {
+      default: settings.seoTitle,
+      template: `%s — ${SITE_NAME}`,
+    },
+    applicationName: SITE_NAME,
+    authors: [{ name: SITE_NAME, url: SITE_URL }],
+    creator: SITE_NAME,
+    publisher: SITE_NAME,
+    keywords: settings.keywords,
+    category: "Fashion",
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
+      },
+    },
+    formatDetection: { telephone: false, address: false, email: false },
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -32,13 +59,17 @@ export const viewport: Viewport = {
   colorScheme: "light",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  preconnect("https://cdn.sanity.io");
+  const settings = await getSettings();
+
   return (
     <html
       lang="en"
       className={`${modernNo20.variable} ${monumentGroteskMono.variable} antialiased`}
     >
       <body className="relative min-h-svh">
+        <JsonLd data={siteGraph(settings)} />
         <SiteHeader />
         {children}
       </body>
