@@ -32,6 +32,23 @@ export function BatchImageArrayInput(props: ArrayOfObjectsInputProps) {
   const [progress, setProgress] = useState<Progress>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const uploadItem = async (file: File) => {
+    if (file.type.startsWith("video/")) {
+      const asset = await client.assets.upload("file", file, { filename: file.name });
+      return {
+        _type: "video",
+        _key: uniqueKey(),
+        file: { _type: "file", asset: { _type: "reference", _ref: asset._id } },
+      };
+    }
+    const asset = await client.assets.upload("image", file, { filename: file.name });
+    return {
+      _type: "image",
+      _key: uniqueKey(),
+      asset: { _type: "reference", _ref: asset._id },
+    };
+  };
+
   const uploadFiles = async (files: File[]) => {
     setError(null);
     setProgress({ done: 0, total: files.length });
@@ -40,16 +57,7 @@ export function BatchImageArrayInput(props: ArrayOfObjectsInputProps) {
     try {
       let done = 0;
       for (const batch of chunk(files, BATCH_SIZE)) {
-        const assets = await Promise.all(
-          batch.map((file) =>
-            client.assets.upload("image", file, { filename: file.name }),
-          ),
-        );
-        const items = assets.map((asset) => ({
-          _type: "image",
-          _key: uniqueKey(),
-          asset: { _type: "reference", _ref: asset._id },
-        }));
+        const items = await Promise.all(batch.map(uploadItem));
         onChange(insert(items, "after", [-1]));
         done += batch.length;
         setProgress({ done, total: files.length });
@@ -81,7 +89,7 @@ export function BatchImageArrayInput(props: ArrayOfObjectsInputProps) {
           text={
             isUploading
               ? `Uploading ${progress.done} / ${progress.total}…`
-              : "Upload multiple images"
+              : "Upload multiple images or videos"
           }
           disabled={readOnly || isUploading}
           onClick={() => fileInputRef.current?.click()}
@@ -95,7 +103,7 @@ export function BatchImageArrayInput(props: ArrayOfObjectsInputProps) {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*"
+        accept="image/*,video/mp4,video/webm,video/quicktime"
         multiple
         hidden
         onChange={handleFiles}

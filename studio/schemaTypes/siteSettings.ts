@@ -20,6 +20,22 @@ export const siteSettings = defineType({
       validation: (rule) => rule.required(),
     }),
     defineField({
+      name: "archiveLabel",
+      title: "Archive link text",
+      type: "string",
+      group: "content",
+      description: "The link that opens the grid of all projects. Leave empty to show “Archive”.",
+      placeholder: "Archive",
+    }),
+    defineField({
+      name: "contactLabel",
+      title: "Contact link text",
+      type: "string",
+      group: "content",
+      description: "The link at the top right of every page. Leave empty to show “Contact”.",
+      placeholder: "Contact",
+    }),
+    defineField({
       name: "bio",
       title: "Bio",
       type: "text",
@@ -35,6 +51,15 @@ export const siteSettings = defineType({
       type: "string",
       group: "content",
       validation: (rule) => rule.required().email(),
+    }),
+    defineField({
+      name: "clients",
+      title: "Client list",
+      type: "text",
+      rows: 10,
+      group: "content",
+      description:
+        "Optional. Shown under the email on the Contact page, in the same font. Line breaks and blank lines are kept.",
     }),
     defineField({
       name: "socialLinks",
@@ -121,6 +146,15 @@ export const siteSettings = defineType({
       group: "seo",
       of: [{ type: "string" }],
       options: { layout: "tags" },
+    }),
+    defineField({
+      name: "favicon",
+      title: "Favicon",
+      type: "image",
+      group: "seo",
+      options: { hotspot: true },
+      description:
+        "The small icon in browser tabs, bookmarks and phone home screens. Upload a square PNG, at least 512 × 512 pixels. Leave empty to keep the current PE.C icon.",
     }),
     defineField({
       name: "shareImage",

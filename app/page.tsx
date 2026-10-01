@@ -13,6 +13,7 @@ export default async function Home() {
       exit={{
         "to-contact": "gallery-out",
         "to-project": "page-out",
+        "to-archive": "page-out",
         default: "none",
       }}
       default="none"

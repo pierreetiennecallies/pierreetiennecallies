@@ -5,6 +5,8 @@
   --foreground: #000000;
   --gutter-x: clamp(20px, 1.67vw, 40px);
   --header-clearance: clamp(88px, 7vw, 180px);
+  --header-pl: max(clamp(24px, 3.06vw, 72px), env(safe-area-inset-left));
+  --header-pr: max(clamp(20px, 1.67vw, 40px), env(safe-area-inset-right));
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
   color-scheme: light;
@@ -41,6 +43,42 @@ body {
   padding-left: max(var(--gutter-x), env(safe-area-inset-left));
   padding-right: max(var(--gutter-x), env(safe-area-inset-right));
   scroll-padding-inline: max(var(--gutter-x), env(safe-area-inset-left));
+}
+
+.archive-grid {
+  --archive-columns: 2;
+  --archive-gap: clamp(6px, 0.53vw, 14px);
+  --archive-row-height: calc(
+    (100vw - var(--header-pl) - var(--header-pr) - (var(--archive-columns) - 1) * var(--archive-gap)) /
+      (var(--archive-columns) * 0.79)
+  );
+  padding: max(var(--header-clearance), 16svh) var(--header-pr) clamp(48px, 6vw, 120px)
+    var(--header-pl);
+  column-gap: var(--archive-gap);
+  row-gap: clamp(28px, 3.15vw, 72px);
+}
+
+@media (min-width: 640px) {
+  .archive-grid {
+    --archive-columns: 3;
+  }
+}
+
+@media (min-width: 1024px) {
+  .archive-grid {
+    --archive-columns: 4;
+  }
+}
+
+@media (min-width: 1280px) {
+  .archive-grid {
+    --archive-columns: 6;
+  }
+}
+
+.archive-item {
+  flex-basis: calc(var(--archive-row-height) * var(--aspect));
+  flex-grow: var(--aspect);
 }
 
 .gallery-image {

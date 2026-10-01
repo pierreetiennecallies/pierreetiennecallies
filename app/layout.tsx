@@ -4,7 +4,7 @@ import { preconnect } from "react-dom";
 import { JsonLd } from "./components/JsonLd";
 import { SiteHeader } from "./components/SiteHeader";
 import { getSettings } from "@/lib/content";
-import { pageMetadata } from "@/lib/metadata";
+import { iconMetadata, pageMetadata } from "@/lib/metadata";
 import { SITE_NAME, SITE_URL } from "@/lib/site";
 import { siteGraph } from "@/lib/structured-data";
 import "./globals.css";
@@ -30,6 +30,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: settings.seoTitle,
       template: `%s — ${SITE_NAME}`,
     },
+    icons: iconMetadata(settings),
     applicationName: SITE_NAME,
     authors: [{ name: SITE_NAME, url: SITE_URL }],
     creator: SITE_NAME,

@@ -3,14 +3,15 @@ import Link from "next/link";
 import { getSettings } from "@/lib/content";
 import { SITE_NAME } from "@/lib/site";
 
-const labelClassName =
-  "text-label leading-none tracking-[0.02em]";
+const labelClassName = "text-label leading-none tracking-[0.02em]";
+
+const navLinkClassName = `block p-3 transition-opacity hover:opacity-50 ${labelClassName}`;
 
 export async function SiteHeader() {
   const settings = await getSettings();
 
   return (
-    <header className="site-header pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between pt-[max(clamp(18px,2.2vw,52px),env(safe-area-inset-top))] pr-[max(clamp(20px,1.67vw,40px),env(safe-area-inset-right))] pl-[max(clamp(24px,3.06vw,72px),env(safe-area-inset-left))]">
+    <header className="site-header pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between pt-[max(clamp(18px,2.2vw,52px),env(safe-area-inset-top))] pr-(--header-pr) pl-(--header-pl)">
       <Link
         href="/"
         transitionTypes={["to-home"]}
@@ -26,13 +27,20 @@ export async function SiteHeader() {
         />
         <span className={labelClassName}>{settings.tagline}</span>
       </Link>
-      <nav>
+      <nav className="pointer-events-auto -mx-3 -mb-3 -mt-[calc(0.45em+0.75rem)] flex">
+        <Link
+          href="/archive"
+          transitionTypes={["to-archive"]}
+          className={navLinkClassName}
+        >
+          {settings.archiveLabel}
+        </Link>
         <Link
           href="/contact"
           transitionTypes={["to-contact"]}
-          className={`pointer-events-auto -mx-3 -mb-3 -mt-[calc(0.45em+0.75rem)] block p-3 transition-opacity hover:opacity-50 ${labelClassName}`}
+          className={navLinkClassName}
         >
-          Contact
+          {settings.contactLabel}
         </Link>
       </nav>
     </header>

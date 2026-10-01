@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ViewTransition } from "react";
 import { coverTransitionName, type Project } from "@/lib/content";
 import { HorizontalScroller } from "./HorizontalScroller";
+import { MediaView } from "./MediaView";
 
 export const galleryImageSizes = "(max-aspect-ratio: 9/16) 86vw, 49vh";
 
@@ -25,14 +25,10 @@ export function WorkGallery({ projects }: { projects: Project[] }) {
                 share="morph"
                 default="none"
               >
-                <Image
-                  src={project.cover.url}
-                  width={project.cover.width}
-                  height={project.cover.height}
-                  alt={project.cover.alt}
+                <MediaView
+                  media={project.cover}
                   sizes={galleryImageSizes}
                   preload={index === 0}
-                  draggable={false}
                   className="gallery-image w-auto select-none"
                 />
               </ViewTransition>

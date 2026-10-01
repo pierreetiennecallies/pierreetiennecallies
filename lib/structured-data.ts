@@ -1,4 +1,4 @@
-import type { Project, Settings } from "./content";
+import { stillImage, type Project, type Settings, type SiteImage } from "./content";
 import { JOB_TITLE, SITE_NAME, SITE_URL, absoluteUrl } from "./site";
 
 const PERSON_ID = `${SITE_URL}/#person`;
@@ -35,19 +35,23 @@ export function siteGraph(settings: Settings) {
   };
 }
 
-export function collectionPageGraph(projects: Project[]) {
+export function collectionPageGraph(
+  projects: Project[],
+  path = "/",
+  title = "Selected work",
+) {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    url: SITE_URL,
-    name: `Selected work — ${SITE_NAME}`,
+    url: absoluteUrl(path),
+    name: `${title} — ${SITE_NAME}`,
     isPartOf: { "@id": WEBSITE_ID },
     about: { "@id": PERSON_ID },
     hasPart: projects.map((project) => ({
       "@type": "CreativeWork",
       name: project.title,
       url: absoluteUrl(`/work/${project.slug}`),
-      image: project.cover.url,
+      ...(project.shareImage ? { image: project.shareImage.url } : {}),
     })),
   };
 }
@@ -74,7 +78,10 @@ export function projectGraph(project: Project) {
         url,
         name: project.title,
         description: project.credits.join(" — "),
-        image: project.images.map((image) => image.url),
+        image: project.media
+          .map(stillImage)
+          .filter((image): image is SiteImage => Boolean(image))
+          .map((image) => image.url),
         creator: { "@id": PERSON_ID },
         isPartOf: { "@id": WEBSITE_ID },
       },

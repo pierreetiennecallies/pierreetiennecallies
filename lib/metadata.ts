@@ -45,3 +45,23 @@ export function pageMetadata({
     },
   };
 }
+
+export function iconMetadata(settings: Settings): Metadata["icons"] {
+  const favicon = settings.favicon;
+  if (!favicon) {
+    return {
+      icon: [
+        { url: "/favicon.ico", sizes: "48x48" },
+        { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      ],
+      apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+    };
+  }
+  return {
+    icon: [
+      { url: favicon.icon32, sizes: "32x32", type: "image/png" },
+      { url: favicon.icon192, sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: favicon.apple180, sizes: "180x180", type: "image/png" }],
+  };
+}

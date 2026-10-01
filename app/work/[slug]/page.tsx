@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { ViewTransition } from "react";
 import { DismissToHome } from "@/app/components/DismissToHome";
 import { HorizontalScroller } from "@/app/components/HorizontalScroller";
 import { JsonLd } from "@/app/components/JsonLd";
+import { MediaView } from "@/app/components/MediaView";
 import {
   captionClassName,
   galleryImageSizes,
@@ -37,7 +37,7 @@ export async function generateMetadata(
       project.description ??
       `${project.credits.join(", ")}. Casting by ${SITE_NAME}, casting director working across fashion, art and culture.`,
     path: `/work/${project.slug}`,
-    image: project.cover,
+    image: project.shareImage,
   });
 }
 
@@ -53,6 +53,7 @@ export default async function ProjectPage(props: PageProps<"/work/[slug]">) {
         "to-home": "page-out",
         "to-contact": "gallery-out",
         "to-project": "page-out",
+        "to-archive": "page-out",
         default: "none",
       }}
       default="none"
@@ -60,9 +61,9 @@ export default async function ProjectPage(props: PageProps<"/work/[slug]">) {
       <DismissToHome className="gallery-offset min-h-svh">
         <JsonLd data={projectGraph(project)} />
         <h1 className="sr-only">{project.title}</h1>
-        <HorizontalScroller label={`${project.title} — images`}>
+        <HorizontalScroller label={`${project.title} — images and videos`}>
           <ul className="flex w-max gap-[clamp(8px,0.83vw,20px)]">
-            {project.images.map((image, index) => (
+            {project.media.map((media, index) => (
               <li key={index} className="shrink-0 snap-start">
                 {index === 0 ? (
                   <ViewTransition
@@ -70,25 +71,19 @@ export default async function ProjectPage(props: PageProps<"/work/[slug]">) {
                     share="morph"
                     default="none"
                   >
-                    <Image
-                      src={image.url}
-                      width={image.width}
-                      height={image.height}
-                      alt={image.alt}
+                    <MediaView
+                      media={media}
                       sizes={galleryImageSizes}
                       preload
-                      draggable={false}
+                      allowSound
                       className="gallery-image w-auto select-none"
                     />
                   </ViewTransition>
                 ) : (
-                  <Image
-                    src={image.url}
-                    width={image.width}
-                    height={image.height}
-                    alt={image.alt}
+                  <MediaView
+                    media={media}
                     sizes={galleryImageSizes}
-                    draggable={false}
+                    allowSound
                     className="gallery-image w-auto select-none"
                   />
                 )}
@@ -97,13 +92,22 @@ export default async function ProjectPage(props: PageProps<"/work/[slug]">) {
           </ul>
         </HorizontalScroller>
         <div className="gallery-gutter -mt-6">
-          <p data-keep-open className={`${captionClassName} w-fit cursor-auto`}>
-            {project.credits.map((line, index) => (
-              <span key={index} className="block">
-                {line}
-              </span>
-            ))}
-          </p>
+          {project.details ? (
+            <p
+              data-keep-open
+              className={`${captionClassName} w-fit max-w-[60ch] cursor-auto whitespace-pre-line`}
+            >
+              {project.details}
+            </p>
+          ) : (
+            <p data-keep-open className={`${captionClassName} w-fit cursor-auto`}>
+              {project.credits.map((line, index) => (
+                <span key={index} className="block">
+                  {line}
+                </span>
+              ))}
+            </p>
+          )}
         </div>
       </DismissToHome>
     </ViewTransition>

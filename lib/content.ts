@@ -9,19 +9,46 @@ export type SiteImage = {
   shareUrl: string;
 };
 
+export type ImageMedia = SiteImage & { kind: "image" };
+
+export type VideoMedia = {
+  kind: "video";
+  url: string;
+  mimeType: string;
+  width: number;
+  height: number;
+  alt: string;
+  hasSound: boolean;
+  poster?: SiteImage;
+};
+
+export type Media = ImageMedia | VideoMedia;
+
 export type Project = {
   slug: string;
   title: string;
   credits: string[];
+  details?: string;
   description?: string;
-  images: SiteImage[];
-  cover: SiteImage;
+  media: Media[];
+  cover: Media;
+  shareImage?: SiteImage;
 };
 
 export type SocialLink = { label: string; url: string };
 
+export type FaviconSet = {
+  icon32: string;
+  icon192: string;
+  icon512: string;
+  apple180: string;
+};
+
 export type Settings = {
   tagline: string;
+  archiveLabel: string;
+  contactLabel: string;
+  clients?: string;
   socialLinks: SocialLink[];
   bioLines: string[];
   email: string;
@@ -30,6 +57,7 @@ export type Settings = {
   contactDescription?: string;
   keywords: string[];
   shareImage?: SiteImage;
+  favicon?: FaviconSet;
 };
 
 type RawImage = {
@@ -39,18 +67,32 @@ type RawImage = {
   asset: { _id: string; url: string; width: number; height: number };
 };
 
+type RawMedia =
+  | (RawImage & { _type: "image" })
+  | {
+      _type: "video";
+      alt?: string;
+      hasSound?: boolean;
+      file: { url: string; mimeType?: string };
+      poster?: RawImage;
+    };
+
 type RawProject = {
   slug: string;
   title: string;
   credits?: string;
+  details?: string;
   seoDescription?: string;
-  images?: RawImage[];
+  media?: RawMedia[];
 };
 
 type RawSettings = Omit<
   Settings,
-  "bioLines" | "shareImage" | "keywords" | "socialLinks"
+  "bioLines" | "shareImage" | "keywords" | "socialLinks" | "contactLabel" | "archiveLabel" | "favicon"
 > & {
+  archiveLabel?: string;
+  favicon?: RawImage;
+  contactLabel?: string;
   bio?: string;
   socialLinks?: { platform?: string; label?: string; url?: string }[];
   keywords?: string[];
@@ -68,22 +110,38 @@ const projectProjection = `{
   "slug": slug.current,
   title,
   credits,
+  details,
   seoDescription,
-  "images": images[defined(asset)]${imageProjection}
+  "media": images[(_type == "image" && defined(asset)) || (_type == "video" && defined(file.asset))]{
+    _type,
+    alt,
+    hasSound,
+    crop,
+    hotspot,
+    "asset": select(_type == "image" => asset->{ _id, url, "width": metadata.dimensions.width, "height": metadata.dimensions.height }),
+    "file": select(_type == "video" => file.asset->{ url, mimeType }),
+    "poster": select(defined(poster.asset) => poster${imageProjection})
+  }
 }`;
 
-const projectsQuery = `*[_type == "project" && defined(slug.current) && count(images[defined(asset)]) > 0] | order(orderRank asc) ${projectProjection}`;
+const projectsQuery = `*[_type == "project" && defined(slug.current) && count(images[(_type == "image" && defined(asset)) || (_type == "video" && defined(file.asset))]) > 0] | order(orderRank asc) ${projectProjection}`;
+
+const DEFAULT_VIDEO_SIZE = { width: 1080, height: 1350 };
 
 const settingsQuery = `*[_id == "siteSettings"][0]{
   tagline,
+  archiveLabel,
+  contactLabel,
   bio,
   email,
+  clients,
   socialLinks[]{ platform, label, url },
   seoTitle,
   seoDescription,
   contactDescription,
   keywords,
-  "shareImage": select(defined(shareImage.asset) => shareImage${imageProjection})
+  "shareImage": select(defined(shareImage.asset) => shareImage${imageProjection}),
+  "favicon": select(defined(favicon.asset) => favicon${imageProjection})
 }`;
 
 function splitLines(text?: string) {
@@ -91,6 +149,11 @@ function splitLines(text?: string) {
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
+}
+
+function trimBlock(text?: string) {
+  const trimmed = text?.replace(/\r\n/g, "\n").trim();
+  return trimmed ? trimmed : undefined;
 }
 
 function toSiteImage(image: RawImage, fallbackAlt: string): SiteImage {
@@ -109,17 +172,60 @@ function toSiteImage(image: RawImage, fallbackAlt: string): SiteImage {
   };
 }
 
+function squareIcon(image: RawImage, size: number) {
+  return imageUrlBuilder
+    .image({ asset: { _ref: image.asset._id }, crop: image.crop, hotspot: image.hotspot })
+    .width(size)
+    .height(size)
+    .fit("crop")
+    .format("png")
+    .url();
+}
+
+function toFaviconSet(image: RawImage): FaviconSet {
+  return {
+    icon32: squareIcon(image, 32),
+    icon192: squareIcon(image, 192),
+    icon512: squareIcon(image, 512),
+    apple180: squareIcon(image, 180),
+  };
+}
+
+function toMedia(raw: RawMedia, fallbackAlt: string): Media {
+  if (raw._type === "video") {
+    const poster = raw.poster ? toSiteImage(raw.poster, fallbackAlt) : undefined;
+    return {
+      kind: "video",
+      url: raw.file.url,
+      mimeType: raw.file.mimeType ?? "video/mp4",
+      width: poster?.width ?? DEFAULT_VIDEO_SIZE.width,
+      height: poster?.height ?? DEFAULT_VIDEO_SIZE.height,
+      alt: raw.alt?.trim() || fallbackAlt,
+      hasSound: raw.hasSound === true,
+      poster,
+    };
+  }
+  return { kind: "image", ...toSiteImage(raw, fallbackAlt) };
+}
+
+export function stillImage(media: Media): SiteImage | undefined {
+  return media.kind === "image" ? media : media.poster;
+}
+
 function toProject(raw: RawProject): Project {
-  const images = (raw.images ?? []).map((image, index) =>
-    toSiteImage(image, `${raw.title} — image ${index + 1}`),
+  const media = (raw.media ?? []).map((item, index) =>
+    toMedia(item, `${raw.title} — ${index + 1}`),
   );
+  const stills = media.map(stillImage).filter((image): image is SiteImage => Boolean(image));
   return {
     slug: raw.slug,
     title: raw.title,
     credits: splitLines(raw.credits),
+    details: trimBlock(raw.details),
     description: raw.seoDescription?.trim() || undefined,
-    images,
-    cover: images[0],
+    media,
+    cover: media[0],
+    shareImage: stills[0],
   };
 }
 
@@ -138,8 +244,11 @@ export const getSettings = cache(async (): Promise<Settings> => {
   if (!raw) throw new Error("Site settings are missing in Sanity");
   return {
     tagline: raw.tagline,
+    archiveLabel: raw.archiveLabel?.trim() || "Archive",
+    contactLabel: raw.contactLabel?.trim() || "Contact",
     bioLines: splitLines(raw.bio),
     email: raw.email,
+    clients: trimBlock(raw.clients),
     socialLinks: (raw.socialLinks ?? []).flatMap((link) =>
       link.url
         ? [{ label: link.label?.trim() || link.platform || link.url, url: link.url }]
@@ -152,6 +261,7 @@ export const getSettings = cache(async (): Promise<Settings> => {
     shareImage: raw.shareImage
       ? toSiteImage(raw.shareImage, `${raw.seoTitle}`)
       : undefined,
+    favicon: raw.favicon ? toFaviconSet(raw.favicon) : undefined,
   };
 });
 

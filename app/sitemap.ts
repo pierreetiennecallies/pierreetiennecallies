@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { getProjects } from "@/lib/content";
+import { getProjects, stillImage, type SiteImage } from "@/lib/content";
 import { absoluteUrl } from "@/lib/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -11,7 +11,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified,
       changeFrequency: "monthly",
       priority: 1,
-      images: projects.map((project) => project.cover.url),
+      images: projects.flatMap((project) => project.shareImage?.url ?? []),
+    },
+    {
+      url: absoluteUrl("/archive"),
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.9,
     },
     {
       url: absoluteUrl("/contact"),
@@ -24,7 +30,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.8,
-      images: project.images.map((image) => image.url),
+      images: project.media
+        .map(stillImage)
+        .filter((image): image is SiteImage => Boolean(image))
+        .map((image) => image.url),
     })),
   ];
 }

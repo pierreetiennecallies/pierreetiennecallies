@@ -22,7 +22,7 @@ export default async function Contact() {
   return (
     <ViewTransition
       enter={{ "to-contact": "bio-in", default: "none" }}
-      exit={{ "to-home": "bio-out", default: "none" }}
+      exit={{ "to-home": "bio-out", "to-archive": "bio-out", default: "none" }}
       default="none"
     >
       <DismissToHome className="bio-page flex min-h-svh items-center justify-center">
@@ -46,6 +46,14 @@ export default async function Contact() {
             >
               {settings.email}
             </a>
+            {settings.clients ? (
+              <p
+                data-keep-open
+                className="mt-[1.1em] max-w-[60ch] cursor-auto text-center leading-[1.35] whitespace-pre-line"
+              >
+                {settings.clients}
+              </p>
+            ) : null}
             {settings.socialLinks.length > 0 ? (
               <ul className="flex flex-wrap justify-center gap-x-[1.5em] gap-y-[0.9em]">
                 {settings.socialLinks.map((link) => (
