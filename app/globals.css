@@ -58,7 +58,7 @@ body {
 
 @media (hover: none) {
   .archive-grid {
-    row-gap: var(--archive-gap);
+    row-gap: clamp(18px, 3vw, 32px);
   }
 }
 
