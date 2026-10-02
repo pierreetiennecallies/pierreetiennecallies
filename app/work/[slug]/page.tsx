@@ -9,6 +9,7 @@ import {
   galleryImageSizes,
 } from "@/app/components/WorkGallery";
 import {
+  captionLines,
   coverTransitionName,
   getProject,
   getProjects,
@@ -67,7 +68,7 @@ export default async function ProjectPage(props: PageProps<"/work/[slug]">) {
       </HorizontalScroller>
       <div className="gallery-gutter -mt-6">
         <div data-keep-open className={`${captionClassName} w-fit max-w-[60ch] cursor-auto`}>
-          {project.credits.map((line, index) => (
+          {captionLines(project).map((line, index) => (
             <span key={index} className="block">
               {line}
             </span>

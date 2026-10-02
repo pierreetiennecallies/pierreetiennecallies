@@ -218,6 +218,17 @@ function toMedia(raw: RawMedia, fallbackAlt: string): Media {
   return { kind: "image", ...toSiteImage(raw, fallbackAlt) };
 }
 
+function sameText(a: string, b: string) {
+  return a.trim().toLowerCase() === b.trim().toLowerCase();
+}
+
+export function captionLines(project: Project) {
+  const credits = project.credits.filter(
+    (line, index) => !(index === 0 && sameText(line, project.title)),
+  );
+  return [project.title, ...credits];
+}
+
 export function stillImage(media: Media): SiteImage | undefined {
   return media.kind === "image" ? media : media.poster;
 }

@@ -1,4 +1,4 @@
-import { coverTransitionName, type Project } from "@/lib/content";
+import { captionLines, coverTransitionName, type Project } from "@/lib/content";
 import { ArchiveScrollRestore } from "./ArchiveScrollRestore";
 import { MediaView } from "./MediaView";
 import { ProjectLink } from "./ProjectLink";
@@ -28,7 +28,7 @@ export function ArchiveGrid({ projects }: { projects: Project[] }) {
               />
           </ProjectLink>
           <p className="pointer-events-none absolute inset-x-0 top-full z-10 bg-background pt-[clamp(6px,0.6vw,14px)] pb-1 text-label leading-[1.35] tracking-[0.02em] opacity-0 transition-opacity duration-300 will-change-[opacity] [backface-visibility:hidden] group-hover/item:opacity-100 group-has-focus-visible/item:opacity-100 motion-reduce:transition-none [@media(hover:none)]:static [@media(hover:none)]:pb-0 [@media(hover:none)]:opacity-100">
-            {project.credits.map((line, lineIndex) => (
+            {captionLines(project).map((line, lineIndex) => (
               <span key={lineIndex} className="block">
                 {line}
               </span>

@@ -1,4 +1,4 @@
-import { coverTransitionName, type Project } from "@/lib/content";
+import { captionLines, coverTransitionName, type Project } from "@/lib/content";
 import { HorizontalScroller } from "./HorizontalScroller";
 import { MediaView } from "./MediaView";
 import { ProjectLink } from "./ProjectLink";
@@ -28,12 +28,10 @@ export function WorkGallery({ projects }: { projects: Project[] }) {
                 />
             </ProjectLink>
             <p
-              className={`${captionClassName} w-0 min-w-full opacity-0 transition-opacity duration-300 will-change-[opacity] [backface-visibility:hidden] group-hover/item:opacity-100 group-has-focus-visible/item:opacity-100 motion-reduce:transition-none [@media(hover:none)]:opacity-100 ${
-                index === 0 ? "group-not-[&:hover]/track:opacity-100" : ""
-              }`}
+              className={`${captionClassName} w-0 min-w-full opacity-0 transition-opacity duration-300 will-change-[opacity] [backface-visibility:hidden] group-hover/item:opacity-100 group-has-focus-visible/item:opacity-100 motion-reduce:transition-none [@media(hover:none)]:opacity-100`}
             >
-              {project.credits.map((line) => (
-                <span key={line} className="block">
+              {captionLines(project).map((line, lineIndex) => (
+                <span key={lineIndex} className="block">
                   {line}
                 </span>
               ))}
